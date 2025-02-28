@@ -1,0 +1,53 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+.game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background-color: #87CEEB;
+}
+
+.score, .lives {
+    position: absolute;
+    top: 10px;
+    font-size: 24px;
+    color: white;
+}
+
+.score {
+    left: 10px;
+}
+
+.lives {
+    right: 10px;
+}
+
+.pig {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    background-image: url('img/pig.png');
+    background-size: cover;
+}
+
+.object {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background-size: cover;
+}
+
+.coin {
+    background-image: url('img/coin-green-L.png');
+}
+
+.hammer {
+    background-image: url('img/pig.png');
+}
