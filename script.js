@@ -65,50 +65,8 @@ function endGame() {
     alert(`Игра окончена! Вы собрали ${coinsCollected} монеток.`);
 }
 
-// Проверяем, поддерживается ли гироскоп
-function isGyroSupported() {
-    return typeof DeviceOrientationEvent !== 'undefined';
-}
-
-// Проверяем, требуется ли запрос разрешения
-function checkGyroPermission() {
-    if (isGyroSupported()) {
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-            // На iOS: показываем кнопку
-            permissionButton.classList.remove('hidden');
-        } else {
-            // На Android и других платформах: доступ уже есть, скрываем кнопку
-            permissionButton.classList.add('hidden');
-            startGame();
-        }
-    } else {
-        // Гироскоп не поддерживается (например, на ПК)
-        permissionButton.classList.add('hidden');
-        alert("Гироскоп не поддерживается на вашем устройстве.");
-    }
-}
-
-// Запрос разрешения
-function requestGyroPermission() {
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission()
-            .then(permissionState => {
-                if (permissionState === 'granted') {
-                    // Разрешение предоставлено, скрываем кнопку
-                    permissionButton.classList.add('hidden');
-                    startGame();
-                } else {
-                    alert("Для игры необходим доступ к гироскопу. Пожалуйста, предоставьте разрешение.");
-                }
-            })
-            .catch(console.error);
-    } else {
-        // Если метод requestPermission недоступен, начинаем игру
-        startGame();
-    }
-}
-
-function handleOrientation(event) {
+// Функция для управления свинкой с помощью гироскопа
+window.addEventListener('deviceorientation', (event) => {
     const gamma = event.gamma; // Наклон влево/вправо
     const pigX = parseInt(pig.style.left) || (window.innerWidth / 2 - 30);
 
@@ -119,22 +77,49 @@ function handleOrientation(event) {
     if (newX > window.innerWidth - 60) newX = window.innerWidth - 60;
 
     pig.style.left = `${newX}px`;
+});
+
+function requestGyroPermission() {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        // Запрашиваем разрешение
+        DeviceOrientationEvent.requestPermission()
+            .then(permissionState => {
+                if (permissionState === 'granted') {
+                    // Разрешение предоставлено
+                    window.addEventListener('deviceorientation', handleOrientation);
+                    console.log("Доступ к гироскопу разрешен");
+                } else {
+                    // Разрешение не предоставлено
+                    console.log("Доступ к гироскопу запрещен");
+                }
+            })
+            .catch(console.error);
+    } else {
+        // Если функция requestPermission недоступна (например, на Android или старых iOS)
+        window.addEventListener('deviceorientation', handleOrientation);
+        console.log("Запрос разрешения не требуется");
+    }
 }
 
-checkGyroPermission();
-permissionButton.addEventListener('click', requestGyroPermission);
+function handleOrientation(event) {
+    const gamma = event.gamma; // Наклон влево/вправо
+    const pig = document.getElementById('pig');
+    const pigX = (gamma + 90) * (window.innerWidth / 180); // Преобразуем наклон в координаты
+    pig.style.left = `${pigX}px`;
+}
+
+// Запрашиваем разрешение при загрузке страницы или по клику
+window.addEventListener('load', () => {
+    permissionButton.onclick = requestGyroPermission;
+    document.body.appendChild(permissionButton);
+});
 
 // Запуск игры
 function startGame() {
-    if (isGyroSupported()) {
-        window.addEventListener('deviceorientation', handleOrientation);
-        gameInterval = setInterval(() => {
-            const objectType = Math.random() > 0.2 ? 'coin' : 'hammer';
-            createObject(objectType);
-        }, 1000);
-    } else {
-        console.log("Гироскоп не поддерживается, игра не может начаться.");
-    }
+    gameInterval = setInterval(() => {
+        const objectType = Math.random() > 0.2 ? 'coin' : 'hammer';
+        createObject(objectType);
+    }, 1000);
 }
 
 startGame();
