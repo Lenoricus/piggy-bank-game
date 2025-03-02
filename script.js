@@ -87,17 +87,17 @@ function requestGyroPermission() {
                 if (permissionState === 'granted') {
                     // Разрешение предоставлено
                     window.addEventListener('deviceorientation', handleOrientation);
-                    console.log("Доступ к гироскопу разрешен");
+                    alert("Доступ к гироскопу разрешен");
                 } else {
                     // Разрешение не предоставлено
-                    console.log("Доступ к гироскопу запрещен");
+                    alert("Доступ к гироскопу запрещен");
                 }
             })
             .catch(console.error);
     } else {
         // Если функция requestPermission недоступна (например, на Android или старых iOS)
         window.addEventListener('deviceorientation', handleOrientation);
-        console.log("Запрос разрешения не требуется");
+        alert("Запрос разрешения не требуется");
     }
 }
 
