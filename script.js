@@ -65,20 +65,6 @@ function endGame() {
     alert(`Игра окончена! Вы собрали ${coinsCollected} монеток.`);
 }
 
-// Функция для управления свинкой с помощью гироскопа
-window.addEventListener('deviceorientation', (event) => {
-    const gamma = event.gamma; // Наклон влево/вправо
-    const pigX = parseInt(pig.style.left) || (window.innerWidth / 2 - 30);
-
-    let newX = pigX + gamma * 2;
-
-    // Ограничение движения свинки в пределах экрана
-    if (newX < 0) newX = 0;
-    if (newX > window.innerWidth - 60) newX = window.innerWidth - 60;
-
-    pig.style.left = `${newX}px`;
-});
-
 function requestGyroPermission() {
     if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         // Запрашиваем разрешение
@@ -102,10 +88,31 @@ function requestGyroPermission() {
 }
 
 function handleOrientation(event) {
-    const gamma = event.gamma; // Наклон влево/вправо
+    const gamma = event.gamma; // Наклон влево/вправо (-90 до 90)
+
+    // Проверяем, что данные гироскопа доступны
+    if (gamma === null || gamma === undefined) {
+        alert("Данные гироскопа недоступны");
+        return;
+    }
+
+    // Получаем текущую позицию свинки
     const pig = document.getElementById('pig');
-    const pigX = (gamma + 90) * (window.innerWidth / 180); // Преобразуем наклон в координаты
-    pig.style.left = `${pigX}px`;
+    const pigWidth = pig.offsetWidth; // Ширина свинки
+    const pigX = parseInt(pig.style.left) || (window.innerWidth / 2 - pigWidth / 2);
+
+    // Вычисляем новую позицию свинки
+    let newX = pigX + gamma * 2;
+
+    // Ограничиваем движение свинки в пределах экрана
+    const minX = 0; // Минимальная позиция (левый край экрана)
+    const maxX = window.innerWidth - pigWidth; // Максимальная позиция (правый край экрана)
+
+    if (newX < minX) newX = minX;
+    if (newX > maxX) newX = maxX;
+
+    // Обновляем позицию свинки
+    pig.style.left = `${newX}px`;
 }
 
 // Запрашиваем разрешение при загрузке страницы или по клику
