@@ -88,31 +88,10 @@ function requestGyroPermission() {
 }
 
 function handleOrientation(event) {
-    const gamma = event.gamma; // Наклон влево/вправо (-90 до 90)
-
-    // Проверяем, что данные гироскопа доступны
-    if (gamma === null || gamma === undefined) {
-        alert("Данные гироскопа недоступны");
-        return;
-    }
-
-    // Получаем текущую позицию свинки
+    const gamma = event.gamma; // Наклон влево/вправо
     const pig = document.getElementById('pig');
-    const pigWidth = pig.offsetWidth; // Ширина свинки
-    const pigX = parseInt(pig.style.left) || (window.innerWidth / 2 - pigWidth / 2);
-
-    // Вычисляем новую позицию свинки
-    let newX = pigX + gamma * 2;
-
-    // Ограничиваем движение свинки в пределах экрана
-    const minX = 0; // Минимальная позиция (левый край экрана)
-    const maxX = window.innerWidth - pigWidth; // Максимальная позиция (правый край экрана)
-
-    if (newX < minX) newX = minX;
-    if (newX > maxX) newX = maxX;
-
-    // Обновляем позицию свинки
-    pig.style.left = `${newX}px`;
+    const pigX = (gamma + 90) * (window.innerWidth / 180); // Преобразуем наклон в координаты
+    pig.style.left = `${pigX}px`;
 }
 
 // Запрашиваем разрешение при загрузке страницы или по клику
