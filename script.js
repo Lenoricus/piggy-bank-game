@@ -1,4 +1,5 @@
 const pig = document.getElementById('pig');
+const permissionButton = document.getElementById('permissionButton');
 const objectsContainer = document.getElementById('objects-container');
 const coinCounter = document.getElementById('coin-counter');
 const lifeCounter = document.getElementById('life-counter');
@@ -64,29 +65,46 @@ function endGame() {
     alert(`Игра окончена! Вы собрали ${coinsCollected} монеток.`);
 }
 
-// Запуск игры
-function startGame() {
-    gameInterval = setInterval(() => {
-        const objectType = Math.random() > 0.2 ? 'coin' : 'hammer';
-        createObject(objectType);
-    }, 1000);
+// Проверяем, поддерживается ли гироскоп
+function isGyroSupported() {
+    return typeof DeviceOrientationEvent !== 'undefined';
 }
 
+// Проверяем, требуется ли запрос разрешения
+function checkGyroPermission() {
+    if (isGyroSupported()) {
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            // На iOS: показываем кнопку
+            permissionButton.classList.remove('hidden');
+        } else {
+            // На Android и других платформах: доступ уже есть, скрываем кнопку
+            permissionButton.classList.add('hidden');
+            startGame();
+        }
+    } else {
+        // Гироскоп не поддерживается (например, на ПК)
+        permissionButton.classList.add('hidden');
+        alert("Гироскоп не поддерживается на вашем устройстве.");
+    }
+}
+
+// Запрос разрешения
 function requestGyroPermission() {
     if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         DeviceOrientationEvent.requestPermission()
             .then(permissionState => {
                 if (permissionState === 'granted') {
-                    window.addEventListener('deviceorientation', handleOrientation);
-                    console.log("Доступ к гироскопу разрешен");
+                    // Разрешение предоставлено, скрываем кнопку
+                    permissionButton.classList.add('hidden');
+                    startGame();
                 } else {
                     alert("Для игры необходим доступ к гироскопу. Пожалуйста, предоставьте разрешение.");
                 }
             })
             .catch(console.error);
     } else {
-        window.addEventListener('deviceorientation', handleOrientation);
-        console.log("Запрос разрешения не требуется");
+        // Если метод requestPermission недоступен, начинаем игру
+        startGame();
     }
 }
 
@@ -103,19 +121,20 @@ function handleOrientation(event) {
     pig.style.left = `${newX}px`;
 }
 
-// Запрашиваем разрешение при загрузке страницы или по клику
-window.addEventListener('load', () => {
-    const button = document.createElement('button');
-    button.textContent = "Разрешить доступ к гироскопу";
-    button.style.position = "fixed";
-    button.style.top = "20px";
-    button.style.left = "50%";
-    button.style.transform = "translateX(-50%)";
-    button.style.padding = "10px 20px";
-    button.style.fontSize = "16px";
-    button.style.zIndex = "1000";
-    button.onclick = requestGyroPermission;
-    document.body.appendChild(button);
-});
+checkGyroPermission();
+permissionButton.addEventListener('click', requestGyroPermission);
+
+// Запуск игры
+function startGame() {
+    if (isGyroSupported()) {
+        window.addEventListener('deviceorientation', handleOrientation);
+        gameInterval = setInterval(() => {
+            const objectType = Math.random() > 0.2 ? 'coin' : 'hammer';
+            createObject(objectType);
+        }, 1000);
+    } else {
+        console.log("Гироскоп не поддерживается, игра не может начаться.");
+    }
+}
 
 startGame();
