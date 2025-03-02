@@ -28,26 +28,28 @@ body {
 
 .pig {
     position: absolute;
-    bottom: 20px;
+    bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
-    width: 60px;
-    height: 60px;
+    width: 101px;
+    height: 77px;
     background-image: url('img/pig.png');
     background-size: cover;
 }
 
 .object {
     position: absolute;
-    width: 30px;
-    height: 30px;
     background-size: cover;
 }
 
 .coin {
+    width: 45px;
+    height: 45px;
     background-image: url('img/coin-green-L.png');
 }
 
 .hammer {
-    background-image: url('img/pig.png');
+    width: 60px;
+    height: 60px;
+    background-image: url('img/hammer.png');
 }
