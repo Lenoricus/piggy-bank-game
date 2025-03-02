@@ -99,6 +99,28 @@ window.addEventListener('load', () => {
     permissionButton.onclick = requestGyroPermission;
 });
 
+const desktopMessage = document.getElementById('desktop-message');
+const gameContainer = document.getElementById('game-container');
+
+// Функция для проверки ширины экрана
+function checkScreenWidth() {
+    if (window.innerWidth > 390) {
+        // Показываем сообщение и скрываем игру
+        desktopMessage.style.display = 'block';
+        gameContainer.style.display = 'none';
+    } else {
+        // Показываем игру и скрываем сообщение
+        desktopMessage.style.display = 'none';
+        gameContainer.style.display = 'block';
+    }
+}
+
+// Проверяем ширину экрана при загрузке страницы
+checkScreenWidth();
+
+// Проверяем ширину экрана при изменении размера окна
+window.addEventListener('resize', checkScreenWidth);
+
 // Запуск игры
 function startGame() {
     gameInterval = setInterval(() => {

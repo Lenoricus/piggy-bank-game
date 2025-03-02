@@ -7,7 +7,11 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="game-container">
+    <div id="desktop-message" class="desktop-message">
+        <p>Извините, игра доступна только на телефонах.</p>
+        <img src="img/qr-code.png" alt="QR-код для скачивания">
+    </div>
+    <div id="game-container" class="game-container">
         <div class="score">Монетки: <span id="coin-counter">0</span></div>
         <div class="lives">Жизни: <span id="life-counter">5</span></div>
         <button id="permissionButton" class="button">Разрешить доступ к гироскопу</button>
