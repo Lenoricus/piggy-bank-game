@@ -104,7 +104,7 @@ const gameContainer = document.getElementById('game-container');
 
 // Функция для проверки ширины экрана
 function checkScreenWidth() {
-    if (window.innerWidth > 390) {
+    if (window.innerWidth > 1199) {
         // Показываем сообщение и скрываем игру
         desktopMessage.style.display = 'block';
         gameContainer.style.display = 'none';
@@ -112,6 +112,7 @@ function checkScreenWidth() {
         // Показываем игру и скрываем сообщение
         desktopMessage.style.display = 'none';
         gameContainer.style.display = 'block';
+        startGame();
     }
 }
 
@@ -128,5 +129,3 @@ function startGame() {
         createObject(objectType);
     }, 1000);
 }
-
-startGame();

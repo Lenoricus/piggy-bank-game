@@ -84,14 +84,14 @@ body {
 }
 
 /* Медиа-запрос для экранов больше 390px */
-@media (min-width: 391px) {
+@media (min-width: 1200px) {
     .desktop-message {
         display: block; /* Показываем сообщение */
     }
 }
 
 /* Медиа-запрос для экранов меньше или равно 390px */
-@media (max-width: 390px) {
+@media (max-width: 1199px) {
     .game-container {
         display: block; /* Показываем игру */
     }
