@@ -102,9 +102,13 @@ window.addEventListener('load', () => {
 const desktopMessage = document.getElementById('desktop-message');
 const gameContainer = document.getElementById('game-container');
 
+function isMobileDevice() {
+    return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 // Функция для проверки ширины экрана
 function checkScreenWidth() {
-    if (window.innerWidth > 1199) {
+    if (!isMobileDevice()) {
         // Показываем сообщение и скрываем игру
         desktopMessage.style.display = 'block';
         gameContainer.style.display = 'none';
