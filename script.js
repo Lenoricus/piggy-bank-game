@@ -64,20 +64,6 @@ function endGame() {
     alert(`Игра окончена! Вы собрали ${coinsCollected} монеток.`);
 }
 
-// Функция для управления свинкой с помощью гироскопа
-window.addEventListener('deviceorientation', (event) => {
-    const gamma = event.gamma; // Наклон влево/вправо
-    const pigX = parseInt(pig.style.left) || (window.innerWidth / 2 - 30);
-
-    let newX = pigX + gamma * 2;
-
-    // Ограничение движения свинки в пределах экрана
-    if (newX < 0) newX = 0;
-    if (newX > window.innerWidth - 60) newX = window.innerWidth - 60;
-
-    pig.style.left = `${newX}px`;
-});
-
 // Запуск игры
 function startGame() {
     gameInterval = setInterval(() => {
@@ -88,21 +74,17 @@ function startGame() {
 
 function requestGyroPermission() {
     if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        // Запрашиваем разрешение
         DeviceOrientationEvent.requestPermission()
             .then(permissionState => {
                 if (permissionState === 'granted') {
-                    // Разрешение предоставлено
                     window.addEventListener('deviceorientation', handleOrientation);
                     console.log("Доступ к гироскопу разрешен");
                 } else {
-                    // Разрешение не предоставлено
-                    console.log("Доступ к гироскопу запрещен");
+                    alert("Для игры необходим доступ к гироскопу. Пожалуйста, предоставьте разрешение.");
                 }
             })
             .catch(console.error);
     } else {
-        // Если функция requestPermission недоступна (например, на Android или старых iOS)
         window.addEventListener('deviceorientation', handleOrientation);
         console.log("Запрос разрешения не требуется");
     }
@@ -110,9 +92,15 @@ function requestGyroPermission() {
 
 function handleOrientation(event) {
     const gamma = event.gamma; // Наклон влево/вправо
-    const pig = document.getElementById('pig');
-    const pigX = (gamma + 90) * (window.innerWidth / 180); // Преобразуем наклон в координаты
-    pig.style.left = `${pigX}px`;
+    const pigX = parseInt(pig.style.left) || (window.innerWidth / 2 - 30);
+
+    let newX = pigX + gamma * 2;
+
+    // Ограничение движения свинки в пределах экрана
+    if (newX < 0) newX = 0;
+    if (newX > window.innerWidth - 60) newX = window.innerWidth - 60;
+
+    pig.style.left = `${newX}px`;
 }
 
 // Запрашиваем разрешение при загрузке страницы или по клику
