@@ -111,7 +111,6 @@ function handleOrientation(event) {
 // Запрашиваем разрешение при загрузке страницы или по клику
 window.addEventListener('load', () => {
     permissionButton.onclick = requestGyroPermission;
-    document.body.appendChild(permissionButton);
 });
 
 // Запуск игры
