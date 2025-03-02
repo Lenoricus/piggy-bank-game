@@ -86,4 +86,48 @@ function startGame() {
     }, 1000);
 }
 
+function requestGyroPermission() {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        // Запрашиваем разрешение
+        DeviceOrientationEvent.requestPermission()
+            .then(permissionState => {
+                if (permissionState === 'granted') {
+                    // Разрешение предоставлено
+                    window.addEventListener('deviceorientation', handleOrientation);
+                    console.log("Доступ к гироскопу разрешен");
+                } else {
+                    // Разрешение не предоставлено
+                    console.log("Доступ к гироскопу запрещен");
+                }
+            })
+            .catch(console.error);
+    } else {
+        // Если функция requestPermission недоступна (например, на Android или старых iOS)
+        window.addEventListener('deviceorientation', handleOrientation);
+        console.log("Запрос разрешения не требуется");
+    }
+}
+
+function handleOrientation(event) {
+    const gamma = event.gamma; // Наклон влево/вправо
+    const pig = document.getElementById('pig');
+    const pigX = (gamma + 90) * (window.innerWidth / 180); // Преобразуем наклон в координаты
+    pig.style.left = `${pigX}px`;
+}
+
+// Запрашиваем разрешение при загрузке страницы или по клику
+window.addEventListener('load', () => {
+    const button = document.createElement('button');
+    button.textContent = "Разрешить доступ к гироскопу";
+    button.style.position = "fixed";
+    button.style.top = "20px";
+    button.style.left = "50%";
+    button.style.transform = "translateX(-50%)";
+    button.style.padding = "10px 20px";
+    button.style.fontSize = "16px";
+    button.style.zIndex = "1000";
+    button.onclick = requestGyroPermission;
+    document.body.appendChild(button);
+});
+
 startGame();
