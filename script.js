@@ -33,9 +33,68 @@ function updateCoinCounter() {
     // Форматируем число так, чтобы оно всегда было 7 цифр (например, 0000005)
     const formattedCoins = String(coinsCollected).padStart(7, '0');
 
+    // Находим индекс первой не нулевой цифры
+    const firstNonZeroIndex = formattedCoins.split('').findIndex((char) => char !== '0');
+
+    // Если все цифры нули (например, 0000000), то белым будет только последний ноль
+    const zeros = formattedCoins.slice(0, firstNonZeroIndex === -1 ? 6 : firstNonZeroIndex); // Серые нули
+    const coins = formattedCoins.slice(firstNonZeroIndex === -1 ? 6 : firstNonZeroIndex); // Белые цифры
+
     // Обновляем текст в элементах
-    zerosElement.textContent = formattedCoins.slice(0, -1); // Первые 6 цифр (нули)
-    coinCounter.textContent = formattedCoins.slice(-1); // Последняя цифра (число)
+    zerosElement.textContent = zeros; // Серые нули
+    coinCounter.textContent = coins; // Белые цифры
+}
+
+// Функция для проверки столкновения
+function checkCollision(pig, object) {
+    const pigRect = pig.getBoundingClientRect();
+    const objectRect = object.getBoundingClientRect();
+
+    return !(
+        pigRect.top > objectRect.bottom ||
+        pigRect.bottom < objectRect.top ||
+        pigRect.left > objectRect.right ||
+        pigRect.right < objectRect.left
+    );
+}
+
+// Запрос доступа к гироскопу
+function requestGyroPermission() {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        // Запрашиваем разрешение
+        DeviceOrientationEvent.requestPermission()
+            .then(permissionState => {
+                if (permissionState === 'granted') {
+                    // Разрешение предоставлено
+                    window.addEventListener('deviceorientation', handleOrientation);
+                    alert("Доступ к гироскопу разрешен");
+                } else {
+                    // Разрешение не предоставлено
+                    alert("Доступ к гироскопу запрещен");
+                }
+            })
+            .catch(console.error);
+    } else {
+        // Если функция requestPermission недоступна (например, на Android или старых iOS)
+        window.addEventListener('deviceorientation', handleOrientation);
+        alert("Запрос разрешения не требуется");
+    }
+}
+
+// Движение свинки
+function handleOrientation(event) {
+    const gamma = event.gamma; // Наклон влево/вправо
+    const pig = document.getElementById('pig');
+    const pigX = (gamma + 90) * (window.innerWidth / 180); // Преобразуем наклон в координаты
+    pig.style.left = `${pigX}px`;
+}
+
+// Запуск игры
+function startGame() {
+    gameInterval = setInterval(() => {
+        const objectType = Math.random() > 0.2 ? 'coin' : 'hammer';
+        createObject(objectType);
+    }, 1000);
 }
 
 // Функция для завершения игры
@@ -43,7 +102,10 @@ function endGame() {
     clearInterval(gameInterval);
     alert(`Игра окончена! Вы собрали ${coinsCollected} монеток.`);
     lives = 5;
+    updateLives();
     coinsCollected = 0;
+    updateCoinCounter();
+    startGame()
 }
 
 function createObject(type) {
@@ -52,7 +114,7 @@ function createObject(type) {
 
     // Если объект — монетка, задаем случайный цвет, размер и поворот
     if (type === 'coin') {
-        const coinImages = ['img/coin-green.png', 'img/coin-blue.png', 'img/coin-purple.png'];
+        const coinImages = ['img/coin-green.png', 'img/coin-blue.png', 'img/coin-purple.png', 'img/coin-yellow.png'];
         const coinSizes = [{ width: 20, height: 20 }, { width: 28, height: 28 }, { width: 36, height: 36 }];
         const randomImage = coinImages[Math.floor(Math.random() * coinImages.length)];
         const randomSize = coinSizes[Math.floor(Math.random() * coinSizes.length)];
@@ -104,57 +166,6 @@ function createObject(type) {
     }, 20);
 }
 
-// Функция для проверки столкновения
-function checkCollision(pig, object) {
-    const pigRect = pig.getBoundingClientRect();
-    const objectRect = object.getBoundingClientRect();
-
-    return !(
-        pigRect.top > objectRect.bottom ||
-        pigRect.bottom < objectRect.top ||
-        pigRect.left > objectRect.right ||
-        pigRect.right < objectRect.left
-    );
-}
-
-// Запрос доступа к гироскопу
-function requestGyroPermission() {
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        // Запрашиваем разрешение
-        DeviceOrientationEvent.requestPermission()
-            .then(permissionState => {
-                if (permissionState === 'granted') {
-                    // Разрешение предоставлено
-                    window.addEventListener('deviceorientation', handleOrientation);
-                    alert("Доступ к гироскопу разрешен");
-                } else {
-                    // Разрешение не предоставлено
-                    alert("Доступ к гироскопу запрещен");
-                }
-            })
-            .catch(console.error);
-    } else {
-        // Если функция requestPermission недоступна (например, на Android или старых iOS)
-        window.addEventListener('deviceorientation', handleOrientation);
-        alert("Запрос разрешения не требуется");
-    }
-}
-
-// Движение свинки
-function handleOrientation(event) {
-    const gamma = event.gamma; // Наклон влево/вправо
-    const pig = document.getElementById('pig');
-    const pigX = (gamma + 90) * (window.innerWidth / 180); // Преобразуем наклон в координаты
-    pig.style.left = `${pigX}px`;
-}
-
-// Запуск игры
-function startGame() {
-    gameInterval = setInterval(() => {
-        const objectType = Math.random() > 0.1 ? 'coin' : 'hammer';
-        createObject(objectType);
-    }, 1000);
-}
 function isMobileDevice() {
     return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 }
