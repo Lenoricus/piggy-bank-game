@@ -8,27 +8,43 @@ body {
     position: relative;
     width: 100vw;
     height: 100vh;
-    background-color: #87CEEB;
-}
-
-.score, .lives {
-    position: absolute;
-    top: 10px;
-    font-size: 24px;
-    color: white;
+    background-color: #141412;
 }
 
 .score {
-    left: 10px;
+    position: absolute;
+    top: 20px;
+    left: 16px;
+    font-family: 'Inter', sans-serif; /* Шрифт Inter */
+    font-size: 22px; /* Размер текста */
+    font-weight: 500; /* Medium */
+    display: flex; /* Чтобы нули и число были в одной строке */
+    align-items: center; /* Выравнивание по вертикали */
+}
+
+.zeros {
+    color: #636363; /* Серый цвет для нулей */
+}
+
+.coins {
+    color: #ffffff; /* Белый цвет для числа */
 }
 
 .lives {
-    right: 10px;
+    position: absolute;
+    top: 20px;
+    right: 16px;
+    display: flex;
+    gap: 5px;
+}
+
+.lives img {
+    width: 20px;
 }
 
 .pig {
     position: absolute;
-    bottom: 40px;
+    bottom: calc(10vh + env(safe-area-inset-bottom)); /* Учитываем безопасную зону */
     left: 50%;
     transform: translateX(-50%);
     width: 101px;
@@ -39,7 +55,7 @@ body {
 
 .button {
     position: fixed;
-    top: 40px;
+    top: 60px;
     left: 50%;
     transform: translateX(-50%);
     padding: 10px 20px;
@@ -52,19 +68,12 @@ body {
     background-size: cover;
 }
 
-.coin {
-    width: 45px;
-    height: 45px;
-    background-image: url('img/coin-green-L.png');
-}
-
 .hammer {
     width: 60px;
     height: 60px;
     background-image: url('img/hammer.png');
 }
 
-/* Стили для сообщения */
 .desktop-message {
     display: none; /* По умолчанию скрыто */
     text-align: center;
@@ -78,7 +87,6 @@ body {
     margin-top: 20px;
 }
 
-/* Стили для игры */
 .game-container {
     display: none; /* По умолчанию скрыто */
 }
