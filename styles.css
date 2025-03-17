@@ -5,7 +5,7 @@ body {
 }
 
 .game-container {
-    position: relative;
+    position: fixed;
     width: 100vw;
     height: 100vh;
     background-color: #141412;
@@ -48,7 +48,7 @@ body {
 
 .pig {
     position: absolute;
-    bottom: calc(10vh + env(safe-area-inset-bottom)); /* Учитываем безопасную зону */
+    bottom: 1vh;
     left: 50%;
     transform: translateX(-50%);
     width: 101px;
