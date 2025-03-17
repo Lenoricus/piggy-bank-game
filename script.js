@@ -17,9 +17,9 @@ function updateLives() {
     livesCounter.innerHTML = '';
 
     // Добавляем иконки сердечек
-    for (let i = 0; i < 5; i++) {
+    for (let i = 5; i > 0; i--) {
         const heart = document.createElement('img');
-        if (i < lives) {
+        if (i <= lives) {
             heart.src = 'img/heart-fill.png'; // Полное сердечко
         } else {
             heart.src = 'img/heart-stroke.png'; // Пустое сердечко
@@ -186,13 +186,13 @@ function checkScreenWidth() {
     }
 }
 
-// Проверяем ширину экрана при загрузке страницы
-checkScreenWidth();
-
 // Запрашиваем разрешение при загрузке страницы или по клику
 window.addEventListener('load', () => {
     permissionButton.onclick = requestGyroPermission;
 });
+
+// Проверяем ширину экрана при загрузке страницы
+checkScreenWidth();
 
 // Проверяем ширину экрана при изменении размера окна
 window.addEventListener('resize', checkScreenWidth);
